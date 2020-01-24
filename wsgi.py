@@ -1,5 +1,5 @@
 # wsgi.py
-from flask import Flask, abort,request,jsonify
+from flask import Flask, abort,request,jsonify,render_template
 from config import Config
 
 app = Flask(__name__)
@@ -15,9 +15,16 @@ from schemas import products_schema
 from schemas import product_schema
 
 
-@app.route('/hello')
-def hello():
-    return "Hello World!"
+@app.route('/')
+def home():
+    products = db.session.query(Product).all()
+    return render_template('home.html', products=products)
+
+@app.route('/<int:id>')
+def product_html(id):
+    product = db.session.query(Product).get(id)
+    return render_template('product.html', product=product)
+
 
 @app.route('/products', methods=['GET'])
 def products():
